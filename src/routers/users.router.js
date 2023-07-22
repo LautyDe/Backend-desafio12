@@ -3,26 +3,6 @@ import passport from "passport";
 
 const router = Router();
 
-/* router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  const userOk = await usersManager.loginUser(email, password);
-  console.log(userOk);
-  if (userOk) {
-    req.session["email"] = userOk.email;
-    req.session["password"] = userOk.password;
-    req.session["logged"] = true;
-    if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
-      req.session["rol"] = "admin";
-    } else {
-      req.session["rol"] = "user";
-    }
-    console.log(req.session);
-    res.redirect("/products");
-  } else {
-    res.redirect("/loginError");
-  }
-}); */
-
 router.post(
   "/login",
   passport.authenticate("local", {
@@ -30,18 +10,6 @@ router.post(
     successRedirect: "/products",
   })
 );
-
-/* router.post("/register", async (req, res) => {
-  const user = req.body;
-  const hashPassword = await hashData(user.password);
-  const newUser = { ...user, password: hashPassword };
-  const userValidator = await usersManager.createUser(newUser);
-  if (userValidator) {
-    res.redirect("/");
-  } else {
-    res.redirect("/registerError");
-  }
-}); */
 
 router.post(
   "/register",

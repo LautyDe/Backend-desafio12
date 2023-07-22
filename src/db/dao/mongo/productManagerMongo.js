@@ -1,6 +1,6 @@
 import { productsModel } from "../../models/products.model.js";
 
-export default class ProductManager {
+class ProductManager {
   async addProduct(product) {
     try {
       /* verifico que el producto tenga todos los parametros */
@@ -169,3 +169,5 @@ export default class ProductManager {
     }
   }
 }
+
+export const productManager = new ProductManager();

@@ -28,3 +28,5 @@ export default class ChatManager {
     }
   }
 }
+
+export const chatManager = new ChatManager();

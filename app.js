@@ -5,11 +5,12 @@ import handlebars from "express-handlebars";
 import { Server } from "socket.io";
 import cookieParser from "cookie-parser";
 //locals
+import config from "./src/config.js";
 import routers from "./src/routers/index.routers.js";
 import { __dirname } from "./src/utils.js";
-import ProductManager from "./src/db/dao/mongo/productManagerMongo.js";
-import ChatManager from "./src/db/dao/mongo/chatManagerMongo.js";
-import CartManager from "./src/db/dao/mongo/cartManagerMongo.js";
+import { productManager } from "./src/db/dao/mongo/productManagerMongo.js";
+import { chatManager } from "./src/db/dao/mongo/chatManagerMongo.js";
+import { cartManager } from "./src/db/dao/mongo/cartManagerMongo.js";
 //db
 import "./src/db/dbConfig.js";
 import mongoStore from "connect-mongo";
@@ -19,12 +20,7 @@ import passport from "passport";
 import "./src/strategies/index.strategies.js";
 
 const app = express();
-const PORT = 8080;
-
-//instances
-const productManager = new ProductManager();
-const chatManager = new ChatManager();
-const cartManager = new CartManager();
+const PORT = config.port;
 
 /* middlewares */
 app.use(express.json());

@@ -1,12 +1,9 @@
 import { Router } from "express";
-import ProductManager from "../../db/dao/mongo/productManagerMongo.js";
-import ChatManager from "../../db/dao/mongo/chatManagerMongo.js";
-import CartManager from "../../db/dao/mongo/cartManagerMongo.js";
+import { productManager } from "./src/db/dao/mongo/productManagerMongo.js";
+import { chatManager } from "./src/db/dao/mongo/chatManagerMongo.js";
+import { cartManager } from "./src/db/dao/mongo/cartManagerMongo.js";
 
 const router = Router();
-const productManager = new ProductManager();
-const chatManager = new ChatManager();
-const cartManager = new CartManager();
 
 //login
 router.get("/", (req, res) => {

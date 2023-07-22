@@ -102,3 +102,5 @@ export default class CartManager {
     }
   }
 }
+
+export const cartManager = new CartManager();

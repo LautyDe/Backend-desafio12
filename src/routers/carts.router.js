@@ -1,10 +1,7 @@
 import { Router } from "express";
-import CartManager from "../db/dao/mongo/cartManagerMongo.js";
-import ProductManager from "../db/dao/mongo/productManagerMongo.js";
+import { cartManager } from "./src/db/dao/mongo/cartManagerMongo.js";
 
 const router = Router();
-const productManager = new ProductManager();
-const cartManager = new CartManager();
 const notFound = { error: "Cart not found" };
 
 /* ok: 200
