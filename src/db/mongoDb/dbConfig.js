@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import config from "../config.js";
+import config from "../../config.js";
 
 try {
   await mongoose.connect(config.mongo_uri);

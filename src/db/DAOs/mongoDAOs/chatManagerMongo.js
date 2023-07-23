@@ -1,6 +1,6 @@
 import { messagesModel } from "../../models/messages.model.js";
 
-export default class ChatManager {
+class ChatManager {
   async getAllMessages() {
     try {
       const allMessages = await messagesModel.find();

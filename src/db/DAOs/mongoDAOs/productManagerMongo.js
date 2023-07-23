@@ -1,4 +1,4 @@
-import { productsModel } from "../../models/products.model.js";
+import { productsModel } from "../mongoDb/models/products.model.js";
 
 class ProductManager {
   async addProduct(product) {

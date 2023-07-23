@@ -1,7 +1,7 @@
 import { compareData } from "../../../utils.js";
 import { usersModel } from "../../models/users.model.js";
 
-export default class UsersManager {
+class UsersManager {
   async createUser(user) {
     try {
       const { email } = user;
@@ -38,3 +38,5 @@ export default class UsersManager {
     }
   }
 }
+
+export const usersManager = new UsersManager();

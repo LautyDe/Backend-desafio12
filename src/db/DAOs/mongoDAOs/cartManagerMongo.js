@@ -88,10 +88,10 @@ export default class CartManager {
     }
   }
 
-  async deleteAllProducts(id) {
+  async deleteAllProducts(cid) {
     try {
       const cart = await cartsModel.findOneAndUpdate(
-        { _id: id },
+        { _id: cid },
         { $set: { products: [] } }
       );
       return cart;
