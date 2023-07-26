@@ -8,19 +8,20 @@ import cookieParser from "cookie-parser";
 import config from "./src/config.js";
 import routers from "./src/routers/index.routers.js";
 import { __dirname } from "./src/utils.js";
-import { productManager } from "./src/db/dao/mongo/productManagerMongo.js";
-import { chatManager } from "./src/db/dao/mongo/chatManagerMongo.js";
-import { cartManager } from "./src/db/dao/mongo/cartManagerMongo.js";
+import { productsService } from "./src/services/products.service.js";
+import { chatService } from "./src/services/chat.service.js";
+import { cartsService } from "./src/services/carts.service.js";
 //db
-import "./src/db/dbConfig.js";
+import "./src/db/mongoDb/dbConfig.js";
 import mongoStore from "connect-mongo";
-import { URI } from "./src/utils.js";
+
 //passport
 import passport from "passport";
 import "./src/strategies/index.strategies.js";
 
 const app = express();
 const PORT = config.port;
+const URI = config.mongo_uri;
 
 /* middlewares */
 app.use(express.json());
@@ -75,32 +76,32 @@ httpServer.on("error", error =>
 /* webSocket */
 const socketServer = new Server(httpServer);
 socketServer.on("connection", async socket => {
-  const products = await productManager.getAll();
-  const messages = await chatManager.getAllMessages();
+  const products = await productsService.findAll();
+  const messages = await chatService.finAllMessages();
 
   socket.emit("products", products);
 
   socket.on("newProduct", async data => {
-    await productManager.addProduct(data);
-    const products = await productManager.getAll();
+    await productsService.addProduct(data);
+    const products = await productsService.findAll();
     socket.emit("products", products);
   });
 
   socket.on("deleteProduct", async id => {
-    await productManager.deleteById(id);
-    const products = await productManager.getAll();
+    await productsService.deleteById(id);
+    const products = await productsService.findAll();
     socket.emit("products", products);
   });
 
   socket.emit("messages", messages);
 
   socket.on("newMessage", async data => {
-    await chatManager.addMessage(data);
+    await chatService.addMessage(data);
     socket.emit("messages", messages);
   });
 
   socket.on("cart", async id => {
-    const cart = await cartManager.getById(id);
+    const cart = await cartsService.findById(id);
     socket.emit("cart", cart);
   });
 });

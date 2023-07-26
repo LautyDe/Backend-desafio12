@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { productManager } from "./src/db/dao/mongo/productManagerMongo.js";
-import { chatManager } from "./src/db/dao/mongo/chatManagerMongo.js";
-import { cartManager } from "./src/db/dao/mongo/cartManagerMongo.js";
+import { productsService } from "../../services/products.service.js";
+import { chatService } from "../../services/chat.service.js";
+import { cartsService } from "../../services/carts.service.js";
 
 const router = Router();
 
@@ -34,8 +34,8 @@ router.get("/logout", (req, res) => {
 
 /* home */
 router.get("/products", async (req, res) => {
-  const products = await productManager.getAll();
-  const userData = await req.session;
+  const products = await productsService.findAll();
+  const userData = req.session;
   res.render("products", {
     style: "products.css",
     title: "Products",
@@ -45,7 +45,7 @@ router.get("/products", async (req, res) => {
 });
 
 router.get("/realtimeproducts", async (req, res) => {
-  const products = await productManager.getAll();
+  const products = await productsService.findAll();
   res.render("realTimeProducts", {
     style: "realTimeProducts.css",
     title: "Real Time Products",
@@ -54,7 +54,7 @@ router.get("/realtimeproducts", async (req, res) => {
 });
 
 router.get("/chat", async (req, res) => {
-  const messages = await chatManager.getAllMessages();
+  const messages = await chatService.finAllMessages();
   res.render("chat", {
     style: "chat.css",
     title: "Chat",
@@ -71,7 +71,7 @@ router.get("/carts", async (req, res) => {
 
 router.get("/carts/:cid", async (req, res) => {
   const { cid } = req.params;
-  const cart = await cartManager.getById(cid);
+  const cart = await cartsService.findById(cid);
   const cartsProducts = cart.products;
   res.render("cartsId", {
     style: "cartsId.css",

@@ -1,4 +1,4 @@
-import { messagesModel } from "../../models/messages.model.js";
+import { messagesModel } from "../../mongoDb/models/messages.model.js";
 
 class ChatManager {
   async getAllMessages() {

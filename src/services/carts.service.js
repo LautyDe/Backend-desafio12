@@ -19,15 +19,6 @@ class CartsService {
     }
   }
 
-  async deleteOne(id) {
-    try {
-      const response = await cartManager.deleteCart(id);
-      return response;
-    } catch (error) {
-      return error;
-    }
-  }
-
   async addToCart(cid, pid) {
     try {
       const response = await cartManager.addToCart(cid, pid);

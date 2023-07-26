@@ -1,7 +1,7 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GitHubStrategy } from "passport-github2";
-import { usersModel } from "../db/models/users.model.js";
+import { usersModel } from "../db/mongoDb/models/users.model.js";
 import { hashData, compareData } from "../utils.js";
 
 //local

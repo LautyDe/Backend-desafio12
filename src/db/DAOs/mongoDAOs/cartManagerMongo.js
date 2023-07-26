@@ -1,5 +1,4 @@
-import { cartsModel } from "../../models/carts.model.js";
-import { productsModel } from "../../models/products.model.js";
+import { cartsModel } from "../../mongoDb/models/carts.model.js";
 
 export default class CartManager {
   async createCart() {
@@ -7,21 +6,7 @@ export default class CartManager {
       const cart = await cartsModel.create({});
       return cart;
     } catch (error) {
-      console.log(`Error creando carrito: ${error.message}`);
-    }
-  }
-
-  async deleteCart(id) {
-    try {
-      const cart = await this.getById(id);
-      if (!cart) {
-        throw new Error(`No se encontro carrito con el id solicitado.`);
-      } else {
-        await cartsModel.findOneAndDelete({ _id: id }, { new: true });
-        return "Carrito eliminado correctamente";
-      }
-    } catch (error) {
-      console.log(`Error eliminando el carrito: ${error.message}`);
+      console.log(`Error creando carrito en el Manager: ${error.message}`);
     }
   }
 
@@ -38,7 +23,7 @@ export default class CartManager {
       }
     } catch (error) {
       console.log(
-        `Error buscando el carrito con el id solicitado: ${error.message}`
+        `Error buscando el carrito con el id solicitado en el Manager: ${error.message}`
       );
     }
   }
@@ -60,7 +45,9 @@ export default class CartManager {
       }
       return cart;
     } catch (error) {
-      console.log(`Error agregando producto al carrito: ${error.message}`);
+      console.log(
+        `Error agregando producto al carrito en el Manager: ${error.message}`
+      );
     }
   }
 
@@ -84,7 +71,9 @@ export default class CartManager {
         return cart;
       }
     } catch (error) {
-      console.log(`Error eliminando producto del carrito: ${error.message}`);
+      console.log(
+        `Error eliminando producto del carrito en el Manager: ${error.message}`
+      );
     }
   }
 
@@ -97,7 +86,7 @@ export default class CartManager {
       return cart;
     } catch (error) {
       console.log(
-        `Error eliminando todos los productos del carrito: ${error.message}`
+        `Error eliminando todos los productos del carrito en el Manager: ${error.message}`
       );
     }
   }
