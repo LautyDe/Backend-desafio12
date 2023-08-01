@@ -1,7 +1,7 @@
 import { chatManager } from "../db/DAOs/mongoDAOs/chatManagerMongo.js";
 
 class ChatService {
-  async finAllMessages() {
+  async findAllMessages() {
     try {
       const response = await chatManager.getAllMessages();
       return response;

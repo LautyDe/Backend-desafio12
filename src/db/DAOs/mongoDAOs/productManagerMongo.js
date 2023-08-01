@@ -18,15 +18,6 @@ class ProductManager {
     }
   }
 
-  async getAll() {
-    try {
-      const allProducts = await productsModel.find().lean(); //leer lean()
-      return allProducts;
-    } catch (error) {
-      console.log(`Error obteniendo todos los productos: ${error.message}`);
-    }
-  }
-
   async getAllPaginated(limit, page, sort, query) {
     try {
       const search = query

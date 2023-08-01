@@ -77,7 +77,7 @@ httpServer.on("error", error =>
 const socketServer = new Server(httpServer);
 socketServer.on("connection", async socket => {
   const products = await productsService.findAll();
-  const messages = await chatService.finAllMessages();
+  const messages = await chatService.findAllMessages();
 
   socket.emit("products", products);
 
