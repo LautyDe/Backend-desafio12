@@ -4,26 +4,30 @@ import session from "express-session";
 import handlebars from "express-handlebars";
 import { Server } from "socket.io";
 import cookieParser from "cookie-parser";
+import compression from "express-compression";
 //locals
 import config from "./src/config.js";
-import routers from "./src/routers/index.routers.js";
+import indexRouters from "./src/routers/index.routers.js";
 import { __dirname } from "./src/utils.js";
 import { productsService } from "./src/services/products.service.js";
 import { chatService } from "./src/services/chat.service.js";
 import { cartsService } from "./src/services/carts.service.js";
+import { errorMiddleware } from "./src/services/errors/error.middleware.js";
 //db
-import "./src/db/mongoDb/dbConfig.js";
+import "./src/DAL/mongoDb/dbConfig.js";
 import mongoStore from "connect-mongo";
 
 //passport
 import passport from "passport";
 import "./src/strategies/index.strategies.js";
+import { logger } from "./src/utils/winston.js";
 
 const app = express();
 const PORT = config.port;
 const URI = config.mongo_uri;
 
 /* middlewares */
+app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
@@ -34,10 +38,10 @@ app.use(cookieParser());
 //mongo session
 app.use(
   session({
-    secret: "SessionKey",
+    secret: config.secret_session,
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 10000 },
+    cookie: { maxAge: 2 * 60 * 60 * 1000 },
     store: new mongoStore({
       mongoUrl: URI,
     }),
@@ -61,16 +65,17 @@ app.set("views", __dirname + "/views");
 app.set("view engine", "hbs");
 
 /* routers */
-app.use("/", routers);
-app.use("/api", routers);
+app.use("/", indexRouters);
+
+app.use(errorMiddleware);
 
 /* server */
 const httpServer = app.listen(PORT, () => {
-  console.log(`Servidor escuchando en el puerto ${httpServer.address().port}`);
-  console.log(`http://localhost:${PORT}`);
+  logger.info(`Servidor escuchando en el puerto ${httpServer.address().port}`);
+  logger.http(`http://localhost:${PORT}`);
 });
 httpServer.on("error", error =>
-  console.log(`Error en servidor: ${error.message}`)
+  logger.error(`Error en servidor: ${error.message}`)
 );
 
 /* webSocket */
@@ -97,11 +102,19 @@ socketServer.on("connection", async socket => {
 
   socket.on("newMessage", async data => {
     await chatService.addMessage(data);
+    const messages = await chatService.findAllMessages();
     socket.emit("messages", messages);
   });
 
-  socket.on("cart", async id => {
-    const cart = await cartsService.findById(id);
-    socket.emit("cart", cart);
+  socket.on("addToCart", async ({ cid, pid }) => {
+    const addToCart = await cartsService.addToCart(cid, pid);
+    socket.emit("addedToCart", { message: "Producto agregado al carrito" });
+  });
+
+  socket.on("deleteFromCart", async ({ cid, pid }) => {
+    const deleteFromCart = await cartsService.deleteProduct(cid, pid);
+    socket.emit("deletedFromCart", {
+      message: "Producto eliminado del carrito",
+    });
   });
 });

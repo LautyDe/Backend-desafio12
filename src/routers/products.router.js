@@ -1,18 +1,18 @@
 import { Router } from "express";
 import { productsController } from "../controllers/products.controller.js";
+import { authMiddleware } from "../middlewares/auth.middleware.js";
+import config from "../config.js";
 
 const router = Router();
 
-router.get("/");
+router.get("/", productsController.getAll);
 
-router.get("/:pid");
+router.get("/:pid", productsController.getProductById);
 
-router.post("/");
+router.post("/", productsController.addProduct);
 
-router.put("/:pid");
+router.put("/:pid", productsController.updateProduct);
 
-router.delete("/:pid");
-
-router.delete("/");
+router.delete("/:pid", productsController.deleteProductById);
 
 export default router;

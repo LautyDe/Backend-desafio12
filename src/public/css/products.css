@@ -4,43 +4,72 @@ h3 {
   text-align: center;
 }
 
-img {
-  margin-bottom: 10px;
-  height: 250px;
-  width: 250px;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Estilos para los productos */
 .productsContainer {
   display: grid;
-  grid-template-columns: 33vw 33vw 33vw;
+  grid-template-columns: 33vw 33vw 33vw; /* Tres tarjetas por fila */
+  gap: 10px;
   justify-items: center;
 }
 
 .productsCard {
-  background-color: black;
-  color: white;
-  text-align: center;
-  height: auto;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
   width: 300px;
-  margin: 20px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: space-between;
+}
+
+.productsCard h3 {
+  font-size: 1rem;
+  margin-top: 0;
+}
+
+.productsCard h4 {
+  font-size: 0.9rem;
+  margin: 5px 0;
+}
+
+.productsCard img {
+  max-width: 100%;
+  max-height: 150px;
+  object-fit: contain;
+  margin: 5px auto;
 }
 
 .buttons {
-  margin: 0 0 10px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.minusButton,
+.plusButton {
+  border: none;
+  background-color: #007bff;
+  width: 25px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  padding: 3px 6px;
+  border-radius: 3px;
+  cursor: pointer;
 }
 
 .minusButton {
-  border: none;
-  background-color: red;
-  border-radius: 6.5px;
-  color: white;
-  width: 50px;
-}
-
-.plusButton {
-  border: none;
-  background-color: green;
-  border-radius: 6.5px;
-  color: white;
-  width: 50px;
+  background-color: #dc3545;
 }

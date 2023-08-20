@@ -1,31 +1,19 @@
-import { chatManager } from "../db/DAOs/mongoDAOs/chatManagerMongo.js";
+import { chatManager } from "../DAL/DAOs/mongoDAOs/chatManagerMongo.js";
 
 class ChatService {
   async findAllMessages() {
-    try {
-      const response = await chatManager.getAllMessages();
-      return response;
-    } catch (error) {
-      return error;
-    }
+    const response = await chatManager.getAllMessages();
+    return response;
   }
 
   async addMessage(objMessage) {
-    try {
-      const response = await chatManager.addMessage(objMessage);
-      return response;
-    } catch (error) {
-      return error;
-    }
+    const response = await chatManager.addMessage(objMessage);
+    return response;
   }
 
   async deleteMessage(id) {
-    try {
-      const response = await chatManager.deleteMessage(id);
-      return response;
-    } catch (error) {
-      return error;
-    }
+    const response = await chatManager.deleteMessage(id);
+    return response;
   }
 }
 

@@ -1,4 +1,6 @@
 const socketClient = io();
+const user = owner.value;
+const userRole = role.value;
 
 socketClient.on("products", data => {
   render(data);
@@ -7,6 +9,8 @@ socketClient.on("products", data => {
 function render(data) {
   const html = data
     .map(item => {
+      const deleteButtonVisibility =
+        user === item.owner || userRole === "admin" ? "block" : "none";
       return `<div class="product">
       <div>${item.title}</div>
       <div>${item.description}</div>
@@ -17,9 +21,9 @@ function render(data) {
       }' class='img'>
       <div>${item.category}</div>  
       <div>${item.stock}</div>
-      <input type="button" value="Eliminar producto 😭" onclick="deleteProduct('${
+      <input type="button" value="Delete product 😭" onclick="deleteProduct('${
         item._id
-      }')"></input>
+      }')" style="display: ${deleteButtonVisibility}"></input>
       </div>
       `;
     })
@@ -54,6 +58,8 @@ function paramsValidator(product) {
 function addProduct() {
   const price = document.getElementById("price").value;
   const stock = document.getElementById("stock").value;
+  const productOwner = document.getElementById("owner").value;
+  const userRole = document.getElementById("role").value;
   const product = {
     title: document.getElementById("title").value,
     description: document.getElementById("description").value,
@@ -61,12 +67,12 @@ function addProduct() {
     thumbnail: document.getElementById("thumbnail").value,
     category: document.getElementById("category").value,
     stock: parseInt(stock),
+    owner: productOwner,
+    role: userRole,
   };
-  if (paramsValidator(product)) {
-    socketClient.emit("newProduct", product);
-    const form = document.getElementById("formAddProduct");
-    form.reset();
-  }
+  socketClient.emit("newProduct", product);
+  const form = document.getElementById("formAddProduct");
+  form.reset();
 }
 
 function deleteProduct(id) {

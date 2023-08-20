@@ -1,5 +1,5 @@
 import { compareData } from "../../../utils.js";
-import { usersModel } from "../../models/users.model.js";
+import { usersModel } from "../../mongoDb/models/users.model.js";
 
 class UsersManager {
   async createUser(user) {
@@ -36,6 +36,16 @@ class UsersManager {
     } catch (error) {
       console.log(`Error en el login: ${error.message}`);
     }
+  }
+
+  async findByEmail(email) {
+    const user = await usersModel.findOne({ email });
+    return user;
+  }
+
+  async findById(id) {
+    const response = await usersModel.findOne({ _id: id });
+    return response;
   }
 }
 

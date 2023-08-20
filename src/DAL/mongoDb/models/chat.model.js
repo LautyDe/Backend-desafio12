@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
-const messagesSchema = new mongoose.Schema({
+const chatSchema = new mongoose.Schema({
   user: { type: String, required: true },
   message: { type: String, required: true },
 });
 
-export const messagesModel = mongoose.model("Messages", messagesSchema);
+export const chatModel = mongoose.model("Chat", chatSchema);

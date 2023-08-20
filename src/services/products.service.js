@@ -1,86 +1,58 @@
-import { productManager } from "../db/DAOs/mongoDAOs/productManagerMongo.js";
+import { productManager } from "../DAL/DAOs/mongoDAOs/productManagerMongo.js";
+import { paramsValidator } from "../utils.js";
+import ProductDTO from "../DAL/DTOs/product.dto.js";
 
 class ProductsService {
   async addProduct(product) {
-    try {
-      const response = await productManager.addProduct(product);
-      return response;
-    } catch (error) {
-      return error;
-    }
+    const paramsOk = await paramsValidator(product);
+    const productDto = new ProductDTO(paramsOk);
+    const response = await productManager.addProduct(productDto);
+    return response;
   }
 
   async findAll() {
-    try {
-      const response = await productManager.getAll();
-      return response;
-    } catch (error) {
-      return error;
-    }
+    const response = await productManager.getAll();
+    return response;
   }
 
   async getAllPaginated(limit, page, sort, query) {
-    try {
-      const response = await productManager.getAllPaginated(
-        limit,
-        page,
-        sort,
-        query
-      );
-      return response;
-    } catch (error) {
-      return error;
-    }
+    const response = await productManager.getAllPaginated(
+      limit,
+      page,
+      sort,
+      query
+    );
+    return response;
   }
 
   async findById(id) {
-    try {
-      const response = await productManager.getById(id);
-      return response;
-    } catch (error) {
-      return error;
-    }
+    const product = await productManager.getById(id);
+    return product;
   }
 
   async updateProduct(id, product) {
-    try {
-      const response = await productManager.updateProduct(id, product);
-      return response;
-    } catch (error) {
-      return error;
-    }
+    const response = await productManager.updateProduct(id, product);
+    return response;
   }
 
   async deleteById(id) {
-    try {
-      const response = await productManager.deleteById(id);
-      return response;
-    } catch (error) {
-      return error;
-    }
+    const response = await productManager.deleteById(id);
+    return response;
   }
 
   async aggregationFunc(limit, page, sort, query) {
-    try {
-      const response = await productManager.aggregationFunc(
-        limit,
-        page,
-        sort,
-        query
-      );
-      return response;
-    } catch (error) {
-      return error;
-    }
+    const response = await productManager.aggregationFunc(
+      limit,
+      page,
+      sort,
+      query
+    );
+    return response;
   }
 
   async deleteAll() {
-    try {
-      const response = await productManager.deleteAll();
-      return response;
-    } catch (error) {
-      return error;
-    }
+    const response = await productManager.deleteAll();
+    return response;
   }
 }
 

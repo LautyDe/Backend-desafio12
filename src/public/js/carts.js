@@ -1,32 +1,85 @@
-const socketClient = io();
+const cartTable = document.getElementById("table");
 
-socketClient.on("cart", data => {
-  render(data);
-});
-
-function render(data) {
-  if (!data) {
-    const html = `<h1>Carrito seleccionado sin productos, por favor revise el id o introduzca algun producto 🫱🏽‍🫲🏽</h1>`;
-    return (document.getElementById("cart").innerHTML = html);
+cartTable?.addEventListener("click", async e => {
+  e.preventDefault();
+  const cartId = cartTable.getAttribute("data-cart-id");
+  const element = e.target;
+  const productId = element.getAttribute("data-product-id");
+  if (element.className === "delete") {
+    try {
+      const response = await fetch(
+        `/api/carts/${cartId}/product/${productId}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (response.ok) {
+        document.location.reload();
+      } else {
+        alert("Error removing product from the cart");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  } else if (element.className === "increase") {
+    try {
+      const quantity = parseInt(element.getAttribute("data-quantity"));
+      const stock = parseInt(element.getAttribute("data-stock"));
+      if (quantity + 1 > stock) {
+        alert("Not enough stock");
+        return;
+      }
+      const response = await fetch(
+        `/api/carts/${cartId}/product/${productId}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ quantity: quantity + 1 }),
+        }
+      );
+      if (response.ok) {
+        document.location.reload();
+      } else {
+        alert("Error increasing quantity");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  } else if (element.className === "decrease") {
+    try {
+      const quantity = parseInt(element.getAttribute("data-quantity"));
+      if (quantity - 1 <= 0) {
+        return;
+      }
+      const response = await fetch(
+        `/api/carts/${cartId}/product/${productId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ quantity: quantity - 1 }),
+        }
+      );
+      if (response.ok) {
+        document.location.reload();
+      } else {
+        alert("Error decreasing quantity");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  } else if (element.className === "purchase") {
+    try {
+      const response = await fetch(`/api/carts/${cartId}/purchase`, {
+        method: "POST",
+      });
+      if (response.ok) {
+        alert("Purchase complete!!!");
+        document.location.reload();
+      } else {
+        alert("Error completing purchase");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
-
-  const html = data.products
-    .map(item => {
-      return `<div class="productsCard">
-      <h3>${item.product.title}</h3>
-      <img src="${item.product.thumbnail}" />
-      <h4>Precio: ${item.product.price}</h4>
-      <h5>Cantidad: ${item.quantity}</h5>
-    </div>
-      `;
-    })
-    .join(" ");
-  document.getElementById("cart").innerHTML = html;
-}
-
-function searchCart() {
-  const cartsId = document.getElementById("cartsId").value;
-  socketClient.emit("cart", cartsId);
-  const form = document.getElementById("searchCart");
-  form.reset();
-}
+});

@@ -1,17 +1,21 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GitHubStrategy } from "passport-github2";
-import { usersModel } from "../db/mongoDb/models/users.model.js";
-import { hashData, compareData } from "../utils.js";
+import { usersModel } from "../DAL/mongoDb/models/users.model.js";
+import { hashData, compareData, passwordGenerator } from "../utils.js";
+import UsersDTO from "../DAL/DTOs/userDB.dto.js";
+import { cartsService } from "../services/carts.service.js";
+import config from "../config.js";
 
 //local
 passport.use(
-  "local",
+  "login",
   new LocalStrategy(
     {
       usernameField: "email",
+      passReqToCallback: true,
     },
-    async (email, password, done) => {
+    async (req, email, password, done) => {
       const user = await usersModel.findOne({ email });
       if (!user) {
         return done(null, false);
@@ -20,6 +24,11 @@ passport.use(
       if (!passwordOk) {
         return done(null, false);
       }
+      user.last_connection = new Date();
+      if (!user.cart) {
+        user.cart = cartsService.createOne();
+      }
+      user.save();
       done(null, user);
     }
   )
@@ -40,7 +49,15 @@ passport.use(
       }
       const hashPassword = await hashData(password);
       const newUser = { ...req.body, password: hashPassword };
-      const newUserDB = await usersModel.create(newUser);
+      const userDto = new UsersDTO(newUser);
+      userDto.last_connection = new Date();
+      const newCart = await cartsService.createOne();
+      const cartId = newCart._id;
+      const usersCart = { ...userDto, cart: cartId };
+      if (email === config.admin_email) {
+        usersCart.role = config.role_admin;
+      }
+      const newUserDB = await usersModel.create(usersCart);
       done(null, newUserDB);
     }
   )
@@ -60,24 +77,44 @@ passport.use(
   "github",
   new GitHubStrategy(
     {
-      clientID: "Iv1.e13e8e11be099aaa",
-      clientSecret: "ac5baaf2220cecf4d954b7cad32f435b85356033",
-      callbackURL: "http://localhost:8080/users/github",
+      clientID: config.github_client_id,
+      clientSecret: config.github_client_secret,
+      callbackURL: config.github_callback_url,
+      passReqToCallback: true,
     },
-    async (accesToken, refresToken, profile, done) => {
+    async (req, accesToken, refresToken, profile, done) => {
       const email = profile._json.email;
       const userDB = await usersModel.findOne({ email });
       if (userDB) {
+        userDB.last_connection = new Date();
+        if (!userDB.cart) {
+          const newCart = await cartsService.createOne();
+          const cartId = newCart._id;
+          userDB.cart = cartId;
+        }
+        await userDB.save();
         return done(null, userDB);
       }
+      const securePassword = await passwordGenerator();
       const newUser = {
         first_name: profile._json.name.split(" ")[0],
         last_name: profile._json.name.split(" ")[1] || "",
         email,
-        password: "",
+        password: await hashData(securePassword),
       };
-      const newUserDB = await usersModel.create(newUser);
-      console.log(newUser);
+      const userDto = new UsersDTO(newUser);
+      if (userDto.email === config.admin_email) {
+        userDto.role = config.role_admin;
+      }
+      const newCart = await cartsService.createOne();
+      const cartId = newCart._id;
+      const usersCart = { ...userDto, cart: cartId };
+      usersCart.last_connection = new Date();
+      const newUserDB = await usersModel.create(usersCart);
+      if (!userDB.cart) {
+        userDB.cart = cartsService.createOne();
+      }
+
       done(null, newUserDB);
     }
   )
